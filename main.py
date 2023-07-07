@@ -1,33 +1,36 @@
-from pyowm import OWM
-from pyowm.utils import config
-from pyowm.utils import timestamps
-from pyowm.utils.config import get_default_config
+import pyowm, datetime
 
-config_dict = get_default_config()  # Инициализация get_default_config()
-config_dict['language'] = 'ru'  # Установка языка
-place = input("Введите ваш город: ")  # Переменная для записи города
-country = input("Введите код вашей страны: ")  # Переменная для записи страны/кода страны
-country_and_place = place + ", " + country  # Запись города и страны в одну переменную через запятую
-
-owm = OWM('27b8d774eca590c83bd411f743c4f344')  # Ваш ключ с сайта open weather map
-mgr = owm.weather_manager()  # Инициализация owm.weather_manager()
-observation = mgr.weather_at_place(country_and_place)
-# Инициализация mgr.weather_at_place() И передача в качестве параметра туда страну и город
-
-w = observation.weather
-
-status = w.detailed_status  # Узнаём статус погоды в городе и записываем в переменную status
-w.wind()  # Узнаем скорость ветра
-humidity = w.humidity  # Узнаём Влажность и записываем её в переменную humidity
-temp = w.temperature('celsius')['temp']  # Узнаём температуру в градусах по цельсию и записываем в переменную temp
+api_key = '36be05764b5968a7d76c7d9e24e2daab'  # your API Key here as string
+owm = pyowm.OWM(api_key).weather_manager()  # Use API key to get data
+city = input("Enter the name of the city: ")
 
 
-def weather():  # Функция с выводом погоды
-    print("В городе " + str(place) + " сейчас " + str(status) +  # Выводим город и статус погоды в нём
-          "\nТемпература " + str(
-        round(temp)) + " градусов по цельсию" +  # Выводим температуру с округлением в ближайшую сторону
-          "\nВлажность составляет " + str(humidity) + "%" +  # Выводим влажность в виде строки
-          "\nСкорость ветра " + str(w.wind()['speed']) + " метров в секунду")  # Узнаём и выводим скорость ветра
+def print_weather(data):
+    ref_time = datetime.datetime.fromtimestamp(data.ref_time).strftime('%Y-%m-%d %H:%M')
+    print(f"Time\t\t: {ref_time}")
+    print(f"Overview\t: {data.detailed_status}")
+    print(f"Wind Speed\t: {data.wind()}")
+    print(f"Humidity\t: {data.humidity}")
+    print(f"Temperature\t: {data.temperature('fahrenheit')}")
+    print(f"Rain\t\t: {data.rain}")
+    print("\n")
 
 
-weather()  # Вызов функции
+def get_current_weather():
+    weather_api = owm.weather_at_place(city)  # give where you need to see the weather
+    weather_data = weather_api.weather  # get out data in the mentioned location
+
+    print("***Current Weather***")
+    print_weather(weather_data)
+    print("\n")
+
+
+def get_forecast_weather():
+    print("***5 day forecast Weather***")
+    for item in owm.forecast_at_place(city, '3h').forecast:
+        print_weather(item)
+
+
+if __name__ == '__main__':
+    get_current_weather()
+    get_forecast_weather()
