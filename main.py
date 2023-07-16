@@ -1,4 +1,9 @@
 import pyowm, datetime
+from pyowm import OWM
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--foo', help='foo help')
+args = parser.parse_args()
 
 api_key = '36be05764b5968a7d76c7d9e24e2daab'  # your API Key here as string
 owm = pyowm.OWM(api_key).weather_manager()  # Use API key to get data
@@ -7,13 +12,15 @@ city = input("Enter the name of the city: ")
 
 def print_weather(data):
     ref_time = datetime.datetime.fromtimestamp(data.ref_time).strftime('%Y-%m-%d %H:%M')
+    print(type(data))
     print(f"Time\t\t: {ref_time}")
     print(f"Overview\t: {data.detailed_status}")
     print(f"Wind Speed\t: {data.wind()}")
     print(f"Humidity\t: {data.humidity}")
-    print(f"Temperature\t: {data.temperature('fahrenheit')}")
+    print(f"Temperature\t: {data.temperature('celsius')['temp']}")
     print(f"Rain\t\t: {data.rain}")
     print("\n")
+
 
 
 def get_current_weather():
@@ -25,12 +32,40 @@ def get_current_weather():
     print("\n")
 
 
+def cast_to_days(data):
+    new_data = []
+
+    for i in range(len(data) - 1):
+        day = data[i]
+        week_day = datetime.datetime.fromtimestamp(data[i].ref_time).weekday()
+
+        if len(new_data) != 0:
+            if week_day == datetime.datetime.fromtimestamp(new_data[-1].ref_time).weekday():
+                continue
+
+        for j in range(i + 1, len(data) - 1):
+            next_item_week_day = datetime.datetime.fromtimestamp(data[j].ref_time).weekday()
+            if week_day == next_item_week_day:
+                day.temperature('celsius')['temp'] += data[j].temperature('celsius')['temp']
+
+        new_data.append(day)
+
+    return new_data
+
+
 def get_forecast_weather():
     print("***5 day forecast Weather***")
-    for item in owm.forecast_at_place(city, '3h').forecast:
-        print_weather(item)
+    forecast_at_place = []
+    for item in owm.forecast_at_place(city, 'daily').forecast:
+        forecast_at_place.append(item)
+
+    #new_z = cast_to_days(forecast_at_place)
+    #for item in new_z:
+       # print(item)
+    print(forecast_at_place)
+
 
 
 if __name__ == '__main__':
-    get_current_weather()
+    #get_current_weather()
     get_forecast_weather()
