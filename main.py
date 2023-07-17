@@ -14,22 +14,10 @@ def get_weather():
         print_weather(item)
 
 
-def get_day_weather(day):
-    print("***Certain day forecast Weather***")
+def get_day_weather(day, comm):
+    print(comm)
 
     day_num = day_to_num(day)
-
-    data = get_data()
-    for item in data:
-        if datetime.datetime.fromtimestamp(item.ref_time).weekday() == day_num:
-            print_weather(item)
-            break
-
-
-def get_current_weather():
-    print("***Current day forecast Weather***")
-
-    day_num = day_to_num("today")
 
     data = get_data()
     for item in data:
@@ -113,7 +101,7 @@ def day_to_num(day):
 
 if __name__ == '__main__':
     get_weather()
-    get_day_weather(day_value)
-    get_current_weather()
+    get_day_weather(day_value, "***Certain day weather***")
+    get_day_weather("today", "***Current day weather***")
 
 
