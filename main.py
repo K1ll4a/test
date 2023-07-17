@@ -5,34 +5,36 @@ owm = pyowm.OWM(api_key).weather_manager()  # Use API key to get data
 city = input("Enter the name of the city: ")
 
 
-def print_weather(data):
-    ref_time = datetime.datetime.fromtimestamp(data.ref_time).strftime('%Y-%m-%d %H:%M')
-    print(f"Time\t\t: {ref_time}")
-    print(f"Temperature\t: {data.temperature('celsius')['temp']}")
-    if data.rain:
-        print(f"Rain: true")
-    print("\n")
+def get_weather():
+    print("***5 day forecast Weather***")
+    data = get_data()
+
+    for item in data:
+        print_weather(item)
+
+
+def get_day_weather():
+    print("***Certain day forecast Weather***")
+    data = get_data()
+
+    for item in data:
+        print_weather(item)
 
 
 def get_current_weather():
-    weather_api = owm.weather_at_place(city)  # give where you need to see the weather
-    weather_data = weather_api.weather  # get out data in the mentioned location
+    print("***Current day forecast Weather***")
+    data = get_data()
 
-    print("***Current Weather***")
-    print_weather(weather_data)
-    print("\n")
-
-
-def get_forecast_weather():
-    print("***5 day forecast Weather***")
-    forecast_at_place = []
-    for item in owm.forecast_at_place(city, '3h').forecast:
-        forecast_at_place.append(item)
-
-    forcast_at_place_days = cast_to_days(forecast_at_place)
-
-    for item in forcast_at_place_days:
+    for item in data:
         print_weather(item)
+
+
+def get_data():
+    weather_at_place_3h = []
+    for item in owm.forecast_at_place(city, "3h").forecast:
+        weather_at_place_3h.append(item)
+
+    return cast_to_days(weather_at_place_3h)
 
 
 def cast_to_days(data):
@@ -61,6 +63,18 @@ def cast_to_days(data):
     return new_data
 
 
+def print_weather(data):
+    ref_time = datetime.datetime.fromtimestamp(data.ref_time).strftime('%Y-%m-%d %H:%M')
+    print(f"Time\t\t: {ref_time}")
+    print(f"Temperature\t: {data.temperature('celsius')['temp']}")
+    if data.rain:
+        print(f"Rain: true")
+    print("\n")
+
+
 if __name__ == '__main__':
+    get_weather()
+    get_day_weather()
     get_current_weather()
-    get_forecast_weather()
+
+
