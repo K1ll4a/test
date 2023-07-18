@@ -2,39 +2,39 @@ import pyowm, datetime
 
 api_key = '36be05764b5968a7d76c7d9e24e2daab'  # your API Key here as string
 owm = pyowm.OWM(api_key).weather_manager()  # Use API key to get data
-city = input("Enter the name of the city: ")
-day_value = input("Enter day: ")
+city = input("Enter the name of the city: ")  # Enter name of the city
+day_value = input("Enter day: ")  # Enter date
 
 
-def get_weather():
+def get_weather():  # Func for displaying the weather for the week
     print("***5 day forecast Weather***")
-    data = get_data()
+    data = get_data()  # Calling a function with framed weather data
 
-    for item in data:
+    for item in data:  # Data search
         print_weather(item)
 
 
-def get_day_weather(day, comm):
+def get_day_weather(day, comm):  # Func for getting weather data on a specific day
     print(comm)
 
     day_num = day_to_num(day)
 
-    data = get_data()
-    for item in data:
-        if datetime.datetime.fromtimestamp(item.ref_time).weekday() == day_num:
+    data = get_data()  # Calling a function with framed weather data
+    for item in data:  # Data search
+        if datetime.datetime.fromtimestamp(item.ref_time).weekday() == day_num:   # Checks day_value is equal to one of the five days
             print_weather(item)
             break
 
 
-def get_data():
+def get_data():  #Function for for displaying weather data
     weather_at_place_3h = []
-    for item in owm.forecast_at_place(city, "3h").forecast:
+    for item in owm.forecast_at_place(city, "3h").forecast:  # Sorting through weather data
         weather_at_place_3h.append(item)
 
-    return cast_to_days(weather_at_place_3h)
+    return cast_to_days(weather_at_place_3h)  # Calling Func cast_to_days  to frame the data
 
 
-def cast_to_days(data):
+def cast_to_days(data):  # Introduction of a function for framing data
     new_data = []
 
     for i in range(len(data) - 1):
@@ -54,13 +54,13 @@ def cast_to_days(data):
                     day.rain = data[j].rain
                 day.temperature('celsius')['temp'] += data[j].temperature('celsius')['temp']
 
-        day.temperature('celsius')['temp'] /= times
-        new_data.append(day)
+        day.temperature('celsius')['temp'] /= times  # Finding the average temperature
+        new_data.append(day)  # Filling an array with data
 
-    return new_data
+    return new_data  # Output of an array with data
 
 
-def print_weather(data):
+def print_weather(data):  # Func for output data
     ref_time = datetime.datetime.fromtimestamp(data.ref_time).strftime('%Y-%m-%d %H:%M')
     print(f"Time\t\t: {ref_time}")
     print(f"Temperature\t: {data.temperature('celsius')['temp']}")
@@ -69,7 +69,7 @@ def print_weather(data):
     print("\n")
 
 
-def day_to_num(day):
+def day_to_num(day):  # Function for numbering days
     lower_day = day.lower()
 
     if lower_day == "today":
@@ -100,8 +100,8 @@ def day_to_num(day):
 
 
 if __name__ == '__main__':
-    get_weather()
-    get_day_weather(day_value, "***Certain day weather***")
-    get_day_weather("today", "***Current day weather***")
+    get_weather()  # Calling the function with the weather for 5 days
+    get_day_weather(day_value, "***Certain day weather***")   # Calling a function with weather data on a specific day
+    get_day_weather("today", "***Current day weather***")  # Calling a function with weather data for today
 
 
