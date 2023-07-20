@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
 
 
-# made by Timur Danilevskiy
+
 
 
 
