@@ -5,7 +5,7 @@ from argparse import ArgumentParser, Namespace
 
 api_key = '36be05764b5968a7d76c7d9e24e2daab'  # your API Key here as string
 owm = pyowm.OWM(api_key).weather_manager()  # Use API key to get data
-city = input("Enter the name of the city: ")  # Enter name of the city
+city = "Moscow"  # Enter name of the city
 #day_value = input("Enter day: ")  # Enter date
 
 
@@ -17,6 +17,9 @@ parser = ArgumentParser(
 )
 
 parser.add_argument("day_value", type=str,  help= "Enter day like ('mo'-monday,'tu'-tuesday,'we'-wednesday,'th' - thursday,'fr' - friday, 'sa' - saturday,'sun' - sunday)" ,default="today")
+subparsers = parser.add_subparsers(help="sub-command help")
+
+
 args = parser.parse_args()
 
 
@@ -68,8 +71,9 @@ def cast_to_days(data):  # Introduction of a function for framing data
                     day.rain = data[j].rain
                 day.temperature('celsius')['temp'] += data[j].temperature('celsius')['temp']
 
-        day.temperature('celsius')['temp'] /= times  # Finding the average temperature
-        new_data.append(day)  # Filling an array with data
+        if times != 0:
+            day.temperature('celsius')['temp'] /= times  # Finding the average temperature
+            new_data.append(day)  # Filling an array with data
 
     return new_data  # Output of an array with data
 
@@ -114,13 +118,18 @@ def day_to_num(day):  # Function for numbering days
 
 
 if __name__ == '__main__':
-    get_weather()  # Calling the function with the weather for 5 days
-    get_day_weather(args.day_value, "***Certain day weather***")   # Calling a function with weather data on a specific day
-    get_day_weather("today", "***Current day weather***")  # Calling a function with weather data for today
+    if args.day_value == "week":
+        get_weather()  # Calling the function with the weather for 5 days
+
+    if args.day_value == "today":
+        get_day_weather(args.day_value, "***Current day weather***")  # Calling a function with weather data for today
+
+    if args.day_value == "mo"  or  args.day_value == "tu" or args.day_value == "we" or args.day_value == "th" or args.day_value == "fr" or args.day_value == "sa" or args.day_value == "sun":
+        get_day_weather(args.day_value,"***Certain day weather***")  # Calling a function with weather data on a specific day
 
 
-parser.print_help()
-parser.print_usage()
+
+# made by Timur Danilevskiy
 
 
 
