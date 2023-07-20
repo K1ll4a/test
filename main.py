@@ -1,9 +1,23 @@
 import pyowm, datetime
+import argparse
+from argparse import ArgumentParser, Namespace
+
 
 api_key = '36be05764b5968a7d76c7d9e24e2daab'  # your API Key here as string
 owm = pyowm.OWM(api_key).weather_manager()  # Use API key to get data
 city = input("Enter the name of the city: ")  # Enter name of the city
-day_value = input("Enter day: ")  # Enter date
+#day_value = input("Enter day: ")  # Enter date
+
+
+parser = ArgumentParser(
+    prog='weather_cli',
+    description='The program outputs weather data in a certain city',
+    epilog="Abbreviations for dates('mo'-monday,'tu'-tuesday,'we'-wednesday,"
+           "'th' - thursday,'fr' - friday, 'sa' - saturday,'sun' - sunday)"
+)
+
+parser.add_argument("day_value", type=str,  help= "Enter day like ('mo'-monday,'tu'-tuesday,'we'-wednesday,'th' - thursday,'fr' - friday, 'sa' - saturday,'sun' - sunday)" ,default="today")
+args = parser.parse_args()
 
 
 def get_weather():  # Func for displaying the weather for the week
@@ -26,7 +40,7 @@ def get_day_weather(day, comm):  # Func for getting weather data on a specific d
             break
 
 
-def get_data():  #Function for for displaying weather data
+def get_data():  # Function  for displaying weather data
     weather_at_place_3h = []
     for item in owm.forecast_at_place(city, "3h").forecast:  # Sorting through weather data
         weather_at_place_3h.append(item)
@@ -101,7 +115,14 @@ def day_to_num(day):  # Function for numbering days
 
 if __name__ == '__main__':
     get_weather()  # Calling the function with the weather for 5 days
-    get_day_weather(day_value, "***Certain day weather***")   # Calling a function with weather data on a specific day
+    get_day_weather(args.day_value, "***Certain day weather***")   # Calling a function with weather data on a specific day
     get_day_weather("today", "***Current day weather***")  # Calling a function with weather data for today
+
+
+parser.print_help()
+parser.print_usage()
+
+
+
 
 
