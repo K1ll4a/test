@@ -16,10 +16,9 @@ parser = ArgumentParser(
            "'th' - thursday,'fr' - friday, 'sa' - saturday,'sun' - sunday)"
 )
 
-parser.add_argument("day_value", type=str,  help= "Enter day like ('mo'-monday,'tu'-tuesday,'we'-wednesday,'th' - thursday,'fr' - friday, 'sa' - saturday,'sun' - sunday)" ,default="today")
-subparsers = parser.add_subparsers(help="sub-command help")
-
-
+subparsers = parser.add_subparsers()
+day_parser = subparsers.add_parser("day ", help="Enter the day of the week")
+day_parser.add_argument("-v")
 args = parser.parse_args()
 
 
@@ -118,13 +117,13 @@ def day_to_num(day):  # Function for numbering days
 
 
 if __name__ == '__main__':
-    if args.day_value == "week":
+    if args.day_parser == "week":
         get_weather()  # Calling the function with the weather for 5 days
 
-    if args.day_value == "today":
+    if args.day_parser == "today":
         get_day_weather(args.day_value, "***Current day weather***")  # Calling a function with weather data for today
 
-    if args.day_value == "mo"  or  args.day_value == "tu" or args.day_value == "we" or args.day_value == "th" or args.day_value == "fr" or args.day_value == "sa" or args.day_value == "sun":
+    if args.day_parser == "mo" or args.day_value == "tu" or args.day_value == "we" or args.day_value == "th" or args.day_value == "fr" or args.day_value == "sa" or args.day_value == "sun":
         get_day_weather(args.day_value,"***Certain day weather***")  # Calling a function with weather data on a specific day
 
 
